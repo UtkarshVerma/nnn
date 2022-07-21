@@ -21,7 +21,11 @@ O_NOFIFO := 0  # no FIFO previewer support
 O_CTX8 := 0  # enable 8 contexts
 O_ICONS := 0  # support icons-in-terminal
 O_NERD := 0  # support icons-nerdfont
+<<<<<<< HEAD
 O_FONTAWESOME := 1  # support icons-fontawesome
+=======
+O_FONTAWESOME := 0  # support icons-fontawesome
+>>>>>>> fontawesome
 O_EMOJI := 0  # support emoji
 O_QSORT := 0  # use Alexey Tourbin's QSORT implementation
 O_BENCH := 0  # benchmark mode (stops at first user input)
