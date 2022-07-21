@@ -80,7 +80,7 @@
 # Authors: Todd Yamakawa, Léo Villeveygoux, @Recidiviste, Mario Ortiz Manero, Luuk van Baal, @WanderLanz
 
 #SPLIT="$SPLIT"  # you can set a permanent split here
-SPLIT_WIDTH="${SPLIT_WIDTH:-50}"
+SPLIT_WIDTH="${SPLIT_WIDTH:-40}"
 #TERMINAL="$TERMINAL"  # same goes for the terminal
 DEBUG_LOG=0  # set to 1 to enable logging for debug purposes
 USE_SCOPE="${USE_SCOPE:-0}"

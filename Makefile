@@ -21,7 +21,7 @@ O_NOFIFO := 0  # no FIFO previewer support
 O_CTX8 := 0  # enable 8 contexts
 O_ICONS := 0  # support icons-in-terminal
 O_NERD := 0  # support icons-nerdfont
-O_FONTAWESOME := 0  # support icons-fontawesome
+O_FONTAWESOME := 1  # support icons-fontawesome
 O_EMOJI := 0  # support emoji
 O_QSORT := 0  # use Alexey Tourbin's QSORT implementation
 O_BENCH := 0  # benchmark mode (stops at first user input)
@@ -35,7 +35,7 @@ O_NOSORT := 0  # disable sorting entries on dir load
 O_COLEMAK := 0 # change key bindings to colemak compatible layout
 O_GITSTATUS := 0 # add git status to detail view
 O_NAMEFIRST := 0 # print file name first, add uid and guid to detail view
-O_RESTOREPREVIEW := 0 # add preview pipe to close and restore preview pane
+O_RESTOREPREVIEW := 1 # add preview pipe to close and restore preview pane
 
 # convert targets to flags for backwards compatibility
 ifneq ($(filter debug,$(MAKECMDGOALS)),)
