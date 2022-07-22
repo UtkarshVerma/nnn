@@ -80,7 +80,7 @@
 # Authors: Todd Yamakawa, Léo Villeveygoux, @Recidiviste, Mario Ortiz Manero, Luuk van Baal, @WanderLanz
 
 #SPLIT="$SPLIT"  # you can set a permanent split here
-SPLIT_SIZE="${SPLIT_SIZE:-40}"
+SPLIT_SIZE="${SPLIT_SIZE:-60}"
 #TERMINAL="$TERMINAL"  # same goes for the terminal
 DEBUG_LOG=0  # set to 1 to enable logging for debug purposes
 USE_SCOPE="${USE_SCOPE:-0}"
@@ -139,7 +139,7 @@ start_preview() {
                 -e "USE_SCOPE=$USE_SCOPE" -e "SPLIT=$SPLIT" -e "USE_PISTOL=$USE_PISTOL" \
                 -e "NNN_PREVIEWDIR=$NNN_PREVIEWDIR" -e "NNN_PREVIEWHEIGHT=$NNN_PREVIEWHEIGHT" \
                 -e "FIFO_UEBERZUG=$FIFO_UEBERZUG" -e "QLPATH=$2" -d"$DSPLIT" \
-                -p "$(( 100 - SPLIT_SIZE ))" "$0" "$1" ;;
+                -p "$SPLIT_SIZE" "$0" "$1" ;;
         kitty) # Setting the layout for the new window. It will be restored after the script ends.
             kitty @ goto-layout splits
             # Trying to use kitty's integrated window management as the split window. All
@@ -336,7 +336,7 @@ preview_file() {
     ext="${1##*.}"
     [ -n "$ext" ] && ext="$(printf "%s" "${ext}" | tr '[:upper:]' '[:lower:]')"
     lines=$(tput lines <"$TTY")
-    cols=$(( $(tput cols <"$TTY") * (100 - SPLIT_SIZE) / SPLIT_SIZE ))
+    cols=$(( $(tput cols <"$TTY") * SPLIT_SIZE / (100 - SPLIT_SIZE) ))
 
     # Otherwise, falling back to the defaults.
     if [ -d "$1" ]; then
