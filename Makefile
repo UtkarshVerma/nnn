@@ -203,6 +203,9 @@ endif
 ifeq ($(strip $(O_NERD)),1)
 	HEADERS += src/icons.h src/icons-generated.h
 endif
+ifeq ($(strip $(O_FONTAWESOME)),1)
+	HEADERS += src/icons.h src/icons-generated.h
+endif
 ifeq ($(strip $(O_ICONS)),1)
 	HEADERS += src/icons.h src/icons-generated.h src/icons-in-terminal.h
 endif
@@ -263,6 +266,8 @@ static:
 	mv $(BIN) $(BIN)-icons-static
 	# static binary with patched nerd font support
 	make O_STATIC=1 O_NERD=1 strip
+	# static binary with font awesome support
+	make O_STATIC=1 O_FONTAWESOME=1 strip
 	mv $(BIN) $(BIN)-nerd-static
 	# static binary with patched fontawesome support
 	make O_STATIC=1 O_FONTAWESOME=1 strip

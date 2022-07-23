@@ -5,56 +5,56 @@
 // https://fontawesome.com/icons/
 
 // Arrows
-#define MD_ARROW_UPWARD    "\uf062"
-#define MD_ARROW_FORWARD   "\uf061"
-#define MD_ARROW_DOWNWARD  "\uf063"
+#define MD_ARROW_UPWARD    ""
+#define MD_ARROW_FORWARD
+#define MD_ARROW_DOWNWARD
 
 // Generics
-#define ICON_DIRECTORY     "\uf07b"
-#define ICON_FILE          "\uf15b"
-#define ICON_EXEC          "\uf144"
-#define ICON_MANUAL        "\uf518"
+#define ICON_DIRECTORY
+#define ICON_FILE
+#define ICON_EXEC
+#define ICON_MANUAL
 
 // Top level and common icons
-#define ICON_ARCHIVE       "\uf1c6"
-#define ICON_BRIEFCASE     "\uf0b1"
-#define ICON_C             "\ue61e"
-#define ICON_CHANGELOG     "\uf1da"
-#define ICON_CHESS         "\uf441"
-#define ICON_CLOJURE       "\ue76a" //
-#define ICON_CONFIGURE     "\uf013"
-#define ICON_CPLUSPLUS     "\ue61d" //
-#define ICON_DATABASE      "\uf1c0"
-#define ICON_DESKTOP       "\uf390"
-#define ICON_DIFF          "\uf440" //
-#define ICON_DOCUMENT      "\uf15c"
-#define ICON_DOWNLOADS     "\uf019"
-#define ICON_ENCRYPT       "\uf084"
-#define ICON_FSHARP        "\ue7a7" //
-#define ICON_GIT           "\uf841"
-#define ICON_HASKELL       "\ue777"
-#define ICON_HTML          "\uf13b"
-#define ICON_JAVA          "\uf4e4"
-#define ICON_JAVASCRIPT    "\uf3b9"
-#define ICON_LICENSE       "\uf56c"
-#define ICON_LINUX         "\uf17c"
-#define ICON_MAKEFILE      "\uf68c" //
-#define ICON_MUSIC         "\uf001"
-#define ICON_MUSICFILE     "\uf1c7"
-#define ICON_OPTICALDISK   "\uf51f"
-#define ICON_PICTUREFILE   "\uf1c5"
-#define ICON_PICTURES      "\uf302"
-#define ICON_PLAYLIST      "\uf910"
-#define ICON_PUBLIC        ICON_DIRECTORY
-#define ICON_PYTHON        "\uf3e2"
-#define ICON_REACT         "\uf41b"
-#define ICON_RUBY          "\ue23e" //
-#define ICON_SCRIPT        "\uf120"
-#define ICON_TEMPLATES     "\ufac6" //
-#define ICON_TEX           "\ufb68" //
-#define ICON_VIDEOFILE     "\uf1c8"
-#define ICON_VIDEOS        "\uf03d"
-#define ICON_WORDDOC       "\uf1c2"
+#define ICON_ARCHIVE
+#define ICON_BRIEFCASE
+#define ICON_C
+#define ICON_CHANGELOG
+#define ICON_CHESS
+#define ICON_CLOJURE        //
+#define ICON_CONFIGURE
+#define ICON_CPLUSPLUS      //
+#define ICON_DATABASE
+#define ICON_DESKTOP
+#define ICON_DIFF           //
+#define ICON_DOCUMENT
+#define ICON_DOWNLOADS
+#define ICON_ENCRYPT
+#define ICON_FSHARP         //
+#define ICON_GIT
+#define ICON_HASKELL
+#define ICON_HTML
+#define ICON_JAVA
+#define ICON_JAVASCRIPT
+#define ICON_LICENSE
+#define ICON_LINUX
+#define ICON_MAKEFILE       //
+#define ICON_MUSIC
+#define ICON_MUSICFILE
+#define ICON_OPTICALDISK
+#define ICON_PICTUREFILE
+#define ICON_PICTURES
+#define ICON_PLAYLIST
+#define ICON_PUBLIC
+#define ICON_PYTHON
+#define ICON_REACT
+#define ICON_RUBY           //
+#define ICON_SCRIPT
+#define ICON_TEMPLATES      //
+#define ICON_TEX            //
+#define ICON_VIDEOFILE
+#define ICON_VIDEOS
+#define ICON_WORDDOC
 
 
 /* Numbers */
@@ -89,18 +89,18 @@
 #define ICON_EXT_CLJS      ICON_CLOJURE
 #define ICON_EXT_CLS       ICON_TEX
 #define ICON_EXT_CMAKE     ICON_MAKEFILE
-#define ICON_EXT_COFFEE    "\uf7b6"
+#define ICON_EXT_COFFEE
 #define ICON_EXT_CONF      ICON_CONFIGURE
 #define ICON_EXT_CPIO      ICON_ARCHIVE
 #define ICON_EXT_CPP       ICON_CPLUSPLUS
-#define ICON_EXT_CSS       "\uf38b"
+#define ICON_EXT_CSS
 #define ICON_EXT_CUE       ICON_PLAYLIST
 #define ICON_EXT_CVS       ICON_CONFIGURE
 #define ICON_EXT_CXX       ICON_CPLUSPLUS
 
 /* D */
 #define ICON_EXT_DB        ICON_DATABASE
-#define ICON_EXT_DEB       "\ue77d" //
+#define ICON_EXT_DEB        //
 #define ICON_EXT_DIFF      ICON_DIFF
 #define ICON_EXT_DLL       ICON_SCRIPT
 #define ICON_EXT_DOC       ICON_WORDDOC
@@ -125,7 +125,7 @@
 /* G */
 #define ICON_EXT_GEM       ICON_RUBY
 #define ICON_EXT_GIF       ICON_PICTUREFILE
-#define ICON_EXT_GO        "\ue40f"
+#define ICON_EXT_GO
 #define ICON_EXT_GPG       ICON_ENCRYPT
 #define ICON_EXT_GZ        ICON_ARCHIVE
 #define ICON_EXT_GZIP      ICON_ARCHIVE
@@ -154,7 +154,7 @@
 #define ICON_EXT_JPEG      ICON_PICTUREFILE
 #define ICON_EXT_JPG       ICON_PICTUREFILE
 #define ICON_EXT_JS        ICON_JAVASCRIPT
-#define ICON_EXT_JSON      "\ufb25" //
+#define ICON_EXT_JSON       //
 #define ICON_EXT_JSX       ICON_REACT
 
 /* K */
@@ -163,16 +163,16 @@
 #define ICON_EXT_LHA       ICON_ARCHIVE
 #define ICON_EXT_LHS       ICON_HASKELL
 #define ICON_EXT_LOG       ICON_DOCUMENT
-#define ICON_EXT_LUA       "\ue620" //
+#define ICON_EXT_LUA        //
 #define ICON_EXT_LZH       ICON_ARCHIVE
 #define ICON_EXT_LZMA      ICON_ARCHIVE
 
 /* M */
 #define ICON_EXT_M4A       ICON_MUSICFILE
 #define ICON_EXT_M4V       ICON_VIDEOFILE
-#define ICON_EXT_M         "\ufd1c" //
-#define ICON_EXT_MAT       "\uf0ce"
-#define ICON_EXT_MD        "\uf60f"
+#define ICON_EXT_M          //
+#define ICON_EXT_MAT
+#define ICON_EXT_MD
 #define ICON_EXT_MK        ICON_MAKEFILE
 #define ICON_EXT_MKV       ICON_VIDEOFILE
 #define ICON_EXT_MOV       ICON_VIDEOFILE
@@ -180,10 +180,10 @@
 #define ICON_EXT_MP4       ICON_VIDEOFILE
 #define ICON_EXT_MPEG      ICON_VIDEOFILE
 #define ICON_EXT_MPG       ICON_VIDEOFILE
-#define ICON_EXT_MSI       "\uf3ca"
+#define ICON_EXT_MSI
 
 /* N */
-#define ICON_EXT_NIX       "\uf313" //
+#define ICON_EXT_NIX        //
 
 /* O */
 #define ICON_EXT_O         ICON_MANUAL
@@ -195,13 +195,13 @@
 /* P */
 #define ICON_EXT_PART      ICON_DOWNLOADS
 #define ICON_EXT_PATCH     ICON_DIFF
-#define ICON_EXT_PDF       "\uf1c1"
+#define ICON_EXT_PDF
 #define ICON_EXT_PGN       ICON_CHESS
-#define ICON_EXT_PHP       "\uf457"
+#define ICON_EXT_PHP
 #define ICON_EXT_PNG       ICON_PICTUREFILE
-#define ICON_EXT_PPT       "\uf1c4"
-#define ICON_EXT_PPTX      "\uf1c4"
-#define ICON_EXT_PSB       "\ue7b8" //
+#define ICON_EXT_PPT
+#define ICON_EXT_PPTX
+#define ICON_EXT_PSB        //
 #define ICON_EXT_PSD       "\ue7b8" //
 #define ICON_EXT_PY        ICON_PYTHON
 #define ICON_EXT_PYC       ICON_PYTHON
@@ -213,22 +213,22 @@
 /* R */
 #define ICON_EXT_RAR       ICON_ARCHIVE
 #define ICON_EXT_RC        ICON_CONFIGURE
-#define ICON_EXT_ROM       "\uf11b"
+#define ICON_EXT_ROM
 #define ICON_EXT_RPM       ICON_ARCHIVE
-#define ICON_EXT_RSS       "\uf143"
-#define ICON_EXT_RTF       "\uf1c1"
+#define ICON_EXT_RSS
+#define ICON_EXT_RTF
 #define ICON_EXT_RB        ICON_RUBY
 
 /* S */
-#define ICON_EXT_SASS      "\uf41e"
+#define ICON_EXT_SASS
 #define ICON_EXT_SCSS      "\uf41e"
 #define ICON_EXT_SO        ICON_MANUAL
-#define ICON_EXT_SCALA     "\ue737" //
+#define ICON_EXT_SCALA      //
 #define ICON_EXT_SH        ICON_SCRIPT
 #define ICON_EXT_SLIM      ICON_SCRIPT
-#define ICON_EXT_SLN       "\ue70c" //
+#define ICON_EXT_SLN        //
 #define ICON_EXT_SQL       ICON_DATABASE
-#define ICON_EXT_SRT       "\uf20a"
+#define ICON_EXT_SRT
 #define ICON_EXT_STY       ICON_TEX
 #define ICON_EXT_SUB       "\uf20a"
 #define ICON_EXT_SVG       ICON_PICTUREFILE
@@ -237,7 +237,7 @@
 #define ICON_EXT_TAR       ICON_ARCHIVE
 #define ICON_EXT_TEX       ICON_TEX
 #define ICON_EXT_TGZ       ICON_ARCHIVE
-#define ICON_EXT_TS        "\ue628" //
+#define ICON_EXT_TS         //
 #define ICON_EXT_TSX       ICON_REACT
 #define ICON_EXT_TXT       ICON_DOCUMENT
 #define ICON_EXT_TXZ       ICON_ARCHIVE
@@ -246,7 +246,7 @@
 
 /* V */
 #define ICON_EXT_VID       ICON_VIDEOFILE
-#define ICON_EXT_VIM       "\ue62b" //
+#define ICON_EXT_VIM        //
 #define ICON_EXT_VIMRC     "\ue62b" //
 
 /* W */
@@ -260,7 +260,7 @@
 #define ICON_EXT_XBPS      ICON_ARCHIVE
 #define ICON_EXT_XCF       ICON_PICTUREFILE
 #define ICON_EXT_XHTML     ICON_HTML
-#define ICON_EXT_XLS       "\uf1c3"
+#define ICON_EXT_XLS
 #define ICON_EXT_XLSX      "\uf1c3"
 #define ICON_EXT_XML       ICON_HTML
 #define ICON_EXT_XZ        ICON_ARCHIVE
