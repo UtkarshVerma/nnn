@@ -15,14 +15,12 @@
  * Any entry with empty icon gets removed by the hash-table generator
  */
 #if defined(ICONS_IN_TERM)
-	#define ICON_STR(I, N, F, E) I
+	#define ICON_STR(I, N, E) I
 	#include "icons-in-terminal.h"
 #elif defined(NERD)
-	#define ICON_STR(I, N, F, E) N
-#elif defined(FONTAWESOME)
-	#define ICON_STR(I, N, F, E) F
+	#define ICON_STR(I, N, E) N
 #elif defined(EMOJI)
-	#define ICON_STR(I, N, F, E) E
+	#define ICON_STR(I, N, E) E
 #endif
 
 /*
@@ -45,85 +43,85 @@
 #define ICON_PADDING_RIGHT_LEN (sizeof ICON_PADDING_RIGHT - 1)
 
 /* ARROWS */
-#define ICON_ARROW_UP      ICON_STR(MD_ARROW_UPWARD, "\uf55c", "\uf062", "⬆")
-#define ICON_ARROW_FORWARD ICON_STR(MD_ARROW_FORWARD, "\uf553", "\uf061", "➡")
-#define ICON_ARROW_DOWN    ICON_STR(MD_ARROW_DOWNWARD, "\uf544", "\uf063", "⬇")
+#define ICON_ARROW_UP      ICON_STR(MD_ARROW_UPWARD, "\uf55c", "⬆")
+#define ICON_ARROW_FORWARD ICON_STR(MD_ARROW_FORWARD, "\uf553", "➡")
+#define ICON_ARROW_DOWN    ICON_STR(MD_ARROW_DOWNWARD, "\uf544", "⬇")
 
 /* GENERIC */
-#define ICON_DIRECTORY     ICON_STR(FA_FOLDER, "\ue5ff", "\uf07b", "📂")
-#define ICON_FILE          ICON_STR(FA_FILE, "\uf713", "\uf15b", "📃")
-#define ICON_EXEC          ICON_STR(FA_COG, "\uf144", "\uf144", "⚙️ ")
+#define ICON_DIRECTORY     ICON_STR(FA_FOLDER, "\ue5ff", "📂")
+#define ICON_FILE          ICON_STR(FA_FILE, "\uf713", "📃")
+#define ICON_EXEC          ICON_STR(FA_COG, "\uf144", "⚙️ ")
 
 /* Top level and common icons */
-#define ICON_ARCHIVE       ICON_STR(FA_FILE_ARCHIVE_O, "\uf53b", "\uf1c6", "📦")
-#define ICON_BRIEFCASE     ICON_STR(FA_BRIEFCASE, "\uf5d5", "\uf0b1", "💼")
-#define ICON_C             ICON_STR(MFIZZ_C, "\ue61e", "\ue61e", "🇨 ")
-#define ICON_CHANGELOG     ICON_STR(FA_HISTORY, "\uf7d9", "\uf1da", "🔺")
-#define ICON_CHESS         ICON_STR("", "\uf639", "\uf441", "")
-#define ICON_CLOJURE       ICON_STR(MFIZZ_CLOJURE, "\ue76a", "\ue76a", "") //
-#define ICON_CONFIGURE     ICON_STR(FILE_CONFIG, "\uf423", "\uf013", "🔧")
-#define ICON_CPLUSPLUS     ICON_STR(MFIZZ_CPLUSPLUS, "\ue61d", "\ue61d", ICON_C) //
-#define ICON_DATABASE      ICON_STR(MFIZZ_DATABASE_ALT2, "\uf6b7", "\uf1c0", "🗃️ ")
-#define ICON_DESKTOP       ICON_STR(FA_DESKTOP, "\ufcbe", "\uf390", "🖥️ ")
-#define ICON_DOCUMENT      ICON_STR(FA_FILE_TEXT_O, "\uf718", "\uf15c", "🗒 ")
-#define ICON_DOWNLOADS     ICON_STR(FA_DOWNLOAD, "\uf5d7", "\uf019", "📥")
-#define ICON_ENCRYPT       ICON_STR("", "\uf805", "\uf084", "🔒")
-#define ICON_FSHARP        ICON_STR(DEV_FSHARP, "\ue7a7", "\ue7a7", "") //
-#define ICON_GIT           ICON_STR(FA_GIT, "\ue5fb", "\uf841", "🌱")
-#define ICON_HASKELL       ICON_STR("", "\ue777", "\ue777", "")
-#define ICON_HTML          ICON_STR(FA_FILE_CODE_O, "\uf72d", "\uf13b", "")
-#define ICON_JAVA          ICON_STR(MFIZZ_JAVA, "\ue738", "\uf4e4", "☕")
-#define ICON_JAVASCRIPT    ICON_STR(FA_FILE_CODE_O, "\uf81d", "\uf3b9", "")
-#define ICON_LICENSE       ICON_STR(FA_COPYRIGHT, "\uf718", "\uf56c", "⚖️ ")
-#define ICON_LINUX         ICON_STR(FA_LINUX, "\uf83c", "\uf17c", "🐧")
-#define ICON_MAKEFILE      ICON_STR(FILE_CMAKE, "\uf68c", "\uf68c", "🛠 ") //
-#define ICON_MANUAL        ICON_STR(FILE_MANPAGE, "\uf5bd", "\uf518", "❓")
-#define ICON_MS_EXCEL      ICON_STR(FILE_EXCEL, "\uf71a", "\uf1c3", ICON_WORDDOC)
-#define ICON_MUSIC         ICON_STR(FA_MUSIC, "\uf832", "\uf001", "🎧")
-#define ICON_MUSICFILE     ICON_STR(FA_FILE_AUDIO_O, "\uf886", "\uf1c7", ICON_MUSIC)
-#define ICON_OPTICALDISK   ICON_STR(LINEA_MUSIC_CD, "\ue271", "\uf51f", "💿")
-#define ICON_PDF           ICON_STR(FA_FILE_PDF_O, "\uf724", "\uf1c1", "📕")
-#define ICON_PHOTOSHOP     ICON_STR(DEV_PHOTOSHOP, "\ue7b8", "\ue7b8", ICON_PICTUREFILE)
-#define ICON_PICTUREFILE   ICON_STR(FA_FILE_IMAGE_O, "\uf71e", "\uf1c5", ICON_PICTURES)
-#define ICON_PICTURES      ICON_STR(MD_CAMERA_ALT, "\uf753", "\uf302", "🎨")
-#define ICON_PLAYLIST      ICON_STR(ICON_MUSICFILE, "\uf910", "\uf910", "")
-#define ICON_POWERPOINT    ICON_STR(FILE_POWERPOINT, "\uf726", "\uf1c4", "📊")
-#define ICON_PUBLIC        ICON_STR(FA_INBOX, "\ue5ff", ICON_DIRECTORY, "👀")
-#define ICON_PYTHON        ICON_STR(MFIZZ_PYTHON, "\ue235", "\uf3e2", "🐍")
-#define ICON_REACT         ICON_STR(FILE_JSX, "\ue625", "\uf41b", ICON_JAVASCRIPT)
-#define ICON_RUBY          ICON_STR(MFIZZ_RUBY, "\ue23e", "\ue23e", "💎") //
-#define ICON_SASS          ICON_STR("", "\ue603", "\uf41e", "")
-#define ICON_SCRIPT        ICON_STR(MFIZZ_SCRIPT, "\ue795", "\uf120", "📜")
-#define ICON_SUBTITLE      ICON_STR(FA_COMMENTS_O, "\uf679", "\uf20a", "💬")
-#define ICON_TEMPLATES     ICON_STR(FA_PAPERCLIP, "\ufac6", "\ufac6", "📎") //
-#define ICON_TEX           ICON_STR(FILE_TEX, "\ufb68", "\ufb68", ICON_DOCUMENT) //
-#define ICON_VIDEOFILE     ICON_STR(FA_FILE_MOVIE_O, "\uf72a", "\uf1c8", ICON_VIDEOS)
-#define ICON_VIDEOS        ICON_STR(FA_FILM, "\uf72f", "\uf03d", "🎞 ")
-#define ICON_VIM           ICON_STR(DEV_VIM, "\ue62b", "\ue62b", "")
-#define ICON_WORDDOC       ICON_STR(FILE_WORD, "\uf72b", "\uf1c2", "📘")
+#define ICON_ARCHIVE       ICON_STR(FA_FILE_ARCHIVE_O, "\uf53b", "📦")
+#define ICON_BRIEFCASE     ICON_STR(FA_BRIEFCASE, "\uf5d5", "💼")
+#define ICON_C             ICON_STR(MFIZZ_C, "\ue61e", "🇨 ")
+#define ICON_CHANGELOG     ICON_STR(FA_HISTORY, "\uf7d9", "🔺")
+#define ICON_CHESS         ICON_STR("", "\uf639", "")
+#define ICON_CLOJURE       ICON_STR(MFIZZ_CLOJURE, "\ue76a", "")
+#define ICON_CONFIGURE     ICON_STR(FILE_CONFIG, "\uf423", "🔧")
+#define ICON_CPLUSPLUS     ICON_STR(MFIZZ_CPLUSPLUS, "\ue61d", ICON_C)
+#define ICON_DATABASE      ICON_STR(MFIZZ_DATABASE_ALT2, "\uf6b7", "🗃️ ")
+#define ICON_DESKTOP       ICON_STR(FA_DESKTOP, "\ufcbe", "🖥️ ")
+#define ICON_DOCUMENT      ICON_STR(FA_FILE_TEXT_O, "\uf718", "🗒 ")
+#define ICON_DOWNLOADS     ICON_STR(FA_DOWNLOAD, "\uf5d7", "📥")
+#define ICON_ENCRYPT       ICON_STR("", "\uf805", "🔒")
+#define ICON_FSHARP        ICON_STR(DEV_FSHARP, "\ue7a7", "")
+#define ICON_GIT           ICON_STR(FA_GIT, "\ue5fb", "🌱")
+#define ICON_HASKELL       ICON_STR("", "\ue777", "")
+#define ICON_HTML          ICON_STR(FA_FILE_CODE_O, "\uf72d", "")
+#define ICON_JAVA          ICON_STR(MFIZZ_JAVA, "\ue738", "☕")
+#define ICON_JAVASCRIPT    ICON_STR(FA_FILE_CODE_O, "\uf81d", "")
+#define ICON_LICENSE       ICON_STR(FA_COPYRIGHT, "\uf718", "⚖️ ")
+#define ICON_LINUX         ICON_STR(FA_LINUX, "\uf83c", "🐧")
+#define ICON_MAKEFILE      ICON_STR(FILE_CMAKE, "\uf68c", "🛠 ")
+#define ICON_MANUAL        ICON_STR(FILE_MANPAGE, "\uf5bd", "❓")
+#define ICON_MS_EXCEL      ICON_STR(FILE_EXCEL, "\uf71a", ICON_WORDDOC)
+#define ICON_MUSIC         ICON_STR(FA_MUSIC, "\uf832", "🎧")
+#define ICON_MUSICFILE     ICON_STR(FA_FILE_AUDIO_O, "\uf886", ICON_MUSIC)
+#define ICON_OPTICALDISK   ICON_STR(LINEA_MUSIC_CD, "\ue271", "💿")
+#define ICON_PDF           ICON_STR(FA_FILE_PDF_O, "\uf724", "📕")
+#define ICON_PHOTOSHOP     ICON_STR(DEV_PHOTOSHOP, "\ue7b8", ICON_PICTUREFILE)
+#define ICON_PICTUREFILE   ICON_STR(FA_FILE_IMAGE_O, "\uf71e", ICON_PICTURES)
+#define ICON_PICTURES      ICON_STR(MD_CAMERA_ALT, "\uf753", "🎨")
+#define ICON_PLAYLIST      ICON_STR(ICON_MUSICFILE, "\uf831", "")
+#define ICON_POWERPOINT    ICON_STR(FILE_POWERPOINT, "\uf726", "📊")
+#define ICON_PUBLIC        ICON_STR(FA_INBOX, "\ue5ff", "👀")
+#define ICON_PYTHON        ICON_STR(MFIZZ_PYTHON, "\ue235", "🐍")
+#define ICON_REACT         ICON_STR(FILE_JSX, "\ue625", ICON_JAVASCRIPT)
+#define ICON_RUBY          ICON_STR(MFIZZ_RUBY, "\ue23e", "💎")
+#define ICON_SASS          ICON_STR("", "\ue603", "")
+#define ICON_SCRIPT        ICON_STR(MFIZZ_SCRIPT, "\ue795", "📜")
+#define ICON_SUBTITLE      ICON_STR(FA_COMMENTS_O, "\uf679", "💬")
+#define ICON_TEMPLATES     ICON_STR(FA_PAPERCLIP, "\ufac6", "📎")
+#define ICON_TEX           ICON_STR(FILE_TEX, "\ufb68", ICON_DOCUMENT)
+#define ICON_VIDEOFILE     ICON_STR(FA_FILE_MOVIE_O, "\uf72a", ICON_VIDEOS)
+#define ICON_VIDEOS        ICON_STR(FA_FILM, "\uf72f", "🎞 ")
+#define ICON_VIM           ICON_STR(DEV_VIM, "\ue62b", "")
+#define ICON_WORDDOC       ICON_STR(FILE_WORD, "\uf72b", "📘")
 
-#define ICON_EXT_ASM       ICON_STR(FILE_NASM, "", "", "")
-#define ICON_EXT_BIN       ICON_STR(OCT_FILE_BINARY, "\uf471", "\uf471", "📓") //
-#define ICON_EXT_COFFEE    ICON_STR(MFIZZ_COFFEE_BEAN, "\ue751", "\uf7b6", "")
-#define ICON_EXT_CSS       ICON_STR(MFIZZ_CSS3, "\ue749", "\uf38b", "🦋")
-#define ICON_EXT_DEB       ICON_STR(MFIZZ_DEBIAN, "\ue77d", "\ue77d", ICON_LINUX) //
-#define ICON_EXT_DIFF      ICON_STR(FILE_DIFF, "\uf440", "\uf440", "📋") //
-#define ICON_EXT_GO        ICON_STR(MFIZZ_GO, "\ufcd1", "\ue40f", "")
-#define ICON_EXT_JSON      ICON_STR(ICON_JAVASCRIPT, "\ufb25", "\ufb25", ICON_JAVASCRIPT) //
-#define ICON_EXT_LUA       ICON_STR(FILE_LUA, "\ue620", "\ue620", "🌘") //
-#define ICON_EXT_M         ICON_STR("", "\ufd1c", "\ufd1c", "📊") //
-#define ICON_EXT_MAT       ICON_STR("", "\uf0ce", "\uf0ce", "")
-#define ICON_EXT_MD        ICON_STR(DEV_MARKDOWN, "\ue609", "\uf60f", "📝")
-#define ICON_EXT_MSI       ICON_STR(FA_WINDOWS, "\uf871", "\uf3ca", "🪟")
-#define ICON_EXT_NIX       ICON_STR("", "\uf313", "\uf313", "") //
-#define ICON_EXT_PATCH     ICON_STR(FILE_PATCH, "\uf440", "\uf440", "🩹")
-#define ICON_EXT_PHP       ICON_STR(MFIZZ_PHP, "\ue73d", "\uf457", "🌐")
-#define ICON_EXT_ROM       ICON_STR(FA_LOCK, "\uf795", "\uf11b", "")
-#define ICON_EXT_RSS       ICON_STR(FA_RSS_SQUARE, "\uf96b", "\uf143", "📡")
-#define ICON_EXT_RTF       ICON_STR(ICON_PDF, "\uf724", "\uf1c1", ICON_PDF)
-#define ICON_EXT_SCALA     ICON_STR(MFIZZ_SCALA, "\ue737", "\ue737", "") //
-#define ICON_EXT_SLN       ICON_STR(DEV_VISUALSTUDIO, "\ue70c", "\ue70c", "") //
-#define ICON_EXT_TS        ICON_STR(FILE_TS, "\ue628", "\ue628", "") //
+#define ICON_EXT_ASM       ICON_STR(FILE_NASM, "", "")
+#define ICON_EXT_BIN       ICON_STR(OCT_FILE_BINARY, "\uf471", "📓")
+#define ICON_EXT_COFFEE    ICON_STR(MFIZZ_COFFEE_BEAN, "\ue751", "")
+#define ICON_EXT_CSS       ICON_STR(MFIZZ_CSS3, "\ue749", "🦋")
+#define ICON_EXT_DEB       ICON_STR(MFIZZ_DEBIAN, "\ue77d", ICON_LINUX)
+#define ICON_EXT_DIFF      ICON_STR(FILE_DIFF, "\uf440", "📋")
+#define ICON_EXT_GO        ICON_STR(MFIZZ_GO, "\ufcd1", "")
+#define ICON_EXT_JSON      ICON_STR(ICON_JAVASCRIPT, "\ufb25", ICON_JAVASCRIPT)
+#define ICON_EXT_LUA       ICON_STR(FILE_LUA, "\ue620", "🌘")
+#define ICON_EXT_M         ICON_STR("", "\ufd1c", "📊")
+#define ICON_EXT_MAT       ICON_STR("", "\uf0ce", "")
+#define ICON_EXT_MD        ICON_STR(DEV_MARKDOWN, "\ue609", "📝")
+#define ICON_EXT_MSI       ICON_STR(FA_WINDOWS, "\uf871", "🪟")
+#define ICON_EXT_NIX       ICON_STR("", "\uf313", "")
+#define ICON_EXT_PATCH     ICON_STR(FILE_PATCH, "\uf440", "🩹")
+#define ICON_EXT_PHP       ICON_STR(MFIZZ_PHP, "\ue73d", "🌐")
+#define ICON_EXT_ROM       ICON_STR(FA_LOCK, "\uf795", "")
+#define ICON_EXT_RSS       ICON_STR(FA_RSS_SQUARE, "\uf143", "📡")
+#define ICON_EXT_RTF       ICON_STR(ICON_PDF, "\uf724", ICON_PDF)
+#define ICON_EXT_SCALA     ICON_STR(MFIZZ_SCALA, "\ue737", "")
+#define ICON_EXT_SLN       ICON_STR(DEV_VISUALSTUDIO, "\ue70c", "")
+#define ICON_EXT_TS        ICON_STR(FILE_TS, "\ue628", "")
 
 /*
  * Hex xterm 256 color code, 0 to follow file specific (if any)
@@ -169,9 +167,11 @@ static const unsigned char init_colors[] = { COLOR_LIST };
 	struct icon_pair { const char *match; const char *icon; unsigned char color; };
 #endif
 
-static const struct icon_pair dir_icon  = {"", ICON_DIRECTORY, 0};
-static const struct icon_pair file_icon = {"", ICON_FILE, 0};
-static const struct icon_pair exec_icon = {"", ICON_EXEC, 0};
+struct icon { const char *icon; unsigned char color; };
+
+static const struct icon dir_icon  = {ICON_DIRECTORY, 0};
+static const struct icon file_icon = {ICON_FILE, 0};
+static const struct icon exec_icon = {ICON_EXEC, 0};
 
 static const struct icon_pair icons_name[] = {
 	{".git",        ICON_GIT,       0},
@@ -262,7 +262,7 @@ static const struct icon_pair icons_ext[] = {
 	/* G */
 	{"gem",        ICON_RUBY,           COLOR_RUBY},
 	{"gif",        ICON_PICTUREFILE,    COLOR_IMAGE},
-	{"go",         ICON_EXT_GO,         0},
+	{"go",         ICON_EXT_GO,         COLOR_C},
 	{"gpg",        ICON_ENCRYPT,        COLOR_ARCHIVE},
 	{"gz",         ICON_ARCHIVE,        COLOR_ARCHIVE},
 	{"gzip",       ICON_ARCHIVE,        COLOR_ARCHIVE},

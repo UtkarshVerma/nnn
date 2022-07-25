@@ -20,8 +20,7 @@ O_NOBATCH := 0  # no built-in batch renamer
 O_NOFIFO := 0  # no FIFO previewer support
 O_CTX8 := 0  # enable 8 contexts
 O_ICONS := 0  # support icons-in-terminal
-O_NERD := 0  # support icons-nerdfont
-O_FONTAWESOME := 1  # support icons-fontawesome
+O_NERD := 1  # support icons-nerdfont
 O_EMOJI := 0  # support emoji
 O_QSORT := 0  # use Alexey Tourbin's QSORT implementation
 O_BENCH := 0  # benchmark mode (stops at first user input)
@@ -72,8 +71,6 @@ ifeq ($(strip $(O_NOLC)),1)
 $(info *** Ignoring O_NOLC since O_ICONS is set ***)
 	else ifeq ($(strip $(O_NERD)),1)
 $(info *** Ignoring O_NOLC since O_NERD is set ***)
-	else ifeq ($(strip $(O_FONTAWESOME)),1)
-$(info *** Ignoring O_NOLC since O_FONTAWESOME is set ***)
 	else ifeq ($(strip $(O_EMOJI)),1)
 $(info *** Ignoring O_NOLC since O_EMOJI is set ***)
 	else
@@ -103,10 +100,6 @@ endif
 
 ifeq ($(strip $(O_NERD)),1)
 	CPPFLAGS += -DNERD
-endif
-
-ifeq ($(strip $(O_FONTAWESOME)),1)
-	CPPFLAGS += -DFONTAWESOME
 endif
 
 ifeq ($(strip $(O_EMOJI)),1)
@@ -203,9 +196,6 @@ endif
 ifeq ($(strip $(O_NERD)),1)
 	HEADERS += src/icons.h src/icons-generated.h
 endif
-ifeq ($(strip $(O_FONTAWESOME)),1)
-	HEADERS += src/icons.h src/icons-generated.h
-endif
 ifeq ($(strip $(O_ICONS)),1)
 	HEADERS += src/icons.h src/icons-generated.h src/icons-in-terminal.h
 endif
@@ -266,12 +256,7 @@ static:
 	mv $(BIN) $(BIN)-icons-static
 	# static binary with patched nerd font support
 	make O_STATIC=1 O_NERD=1 strip
-	# static binary with font awesome support
-	make O_STATIC=1 O_FONTAWESOME=1 strip
 	mv $(BIN) $(BIN)-nerd-static
-	# static binary with patched fontawesome support
-	make O_STATIC=1 O_FONTAWESOME=1 strip
-	mv $(BIN) $(BIN)-fontawesome-static
 	# static binary with emoji support
 	make O_STATIC=1 O_EMOJI=1 strip
 	mv $(BIN) $(BIN)-emoji-static
