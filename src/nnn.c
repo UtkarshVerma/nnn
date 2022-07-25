@@ -627,14 +627,14 @@ static const char * const messages[] = {
 	"cancelled",
 	"failed!",
 	"session name: ",
-	"'c'p / 'm'v as?",
-	"'c'urrent / 's'el?",
+	"'c'p/'m'v as?",
+	"'c'urrent/'s'el?",
 	"%s %s? [Esc/n/N cancels]",
 	"limit exceeded",
-	"'f'ile / 'd'ir / 's'ym / 'h'ard?",
-	"'c'li / 'g'ui?",
+	"'f'ile/'d'ir/'s'ym/'h'ard?",
+	"'c'li/'g'ui?",
 	"overwrite?",
-	"'s'ave / 'l'oad / 'r'estore?",
+	"'s'ave/'l'oad/'r'estore?",
 	"Quit all contexts?",
 	"remote name (- for hovered): ",
 	"archive [path/]name: ",
@@ -650,13 +650,13 @@ static const char * const messages[] = {
 	"not set",
 	"entry exists",
 	"too few cols!",
-	"'s'shfs / 'r'clone?",
+	"'s'shfs/'r'clone?",
 	"refresh if slow",
 	"app: ",
-	"'o'pen / e'x'tract / 'l's / 'm'nt?",
+	"'o'pen/e'x'tract/'l's/'m'nt?",
 	"keys:",
 	"invalid regex",
-	"'a'u / 'd'u / 'e'xt / 'r'ev / 's'z / 't'm / 'v'er / 'c'lr / '^T'?",
+	"'a'u/'d'u/'e'xt/'r'ev/'s'z/'t'm/'v'er/'c'lr/'^T'?",
 	"unmount failed! try lazy?",
 	"first file (\')/char?",
 	"remove tmp file?",
@@ -3961,16 +3961,14 @@ static char *get_lsperms(mode_t mode)
 }
 
 #ifdef ICONS_ENABLED
-static const struct icon_pair *get_icon(const struct entry *ent)
+static struct icon get_icon(const struct entry *ent)
 {
-	ushort_t i = 0;
-
-	for (; i < ELEMENTS(icons_name); ++i)
+	for (size_t i = 0; i < ELEMENTS(icons_name); ++i)
 		if (strcasecmp(ent->name, icons_name[i].match) == 0)
-			return &icons_name[i];
+			return (struct icon){ icons_name[i].icon, icons_name[i].color };
 
 	if (ent->flags & DIR_OR_DIRLNK)
-		return &dir_icon;
+		return dir_icon;
 
 	char *tmp = xextension(ent->name, ent->nlen);
 
@@ -3979,29 +3977,27 @@ static const struct icon_pair *get_icon(const struct entry *ent)
 		for (k = 0; k < ICONS_PROBE_MAX; ++k) {
 			z = (h + k) % ELEMENTS(icons_ext);
 			if (strcasecmp(tmp, icons_ext[z].match) == 0)
-				return &icons_ext[z];
+				return (struct icon){ icons_ext_uniq[icons_ext[z].idx], icons_ext[z].color };
 		}
 	}
 
 	/* If there's no match and the file is executable, icon that */
 	if (ent->mode & 0100)
-		return &exec_icon;
-
-	return &file_icon;
+		return exec_icon;
+	return file_icon;
 }
 
 static void print_icon(const struct entry *ent, const int attrs)
 {
-	const struct icon_pair *picon = get_icon(ent);
-
+	const struct icon icon = get_icon(ent);
 	addstr(ICON_PADDING_LEFT);
-	if (picon->color)
-		attron(COLOR_PAIR(C_UND + 1 + picon->color));
+	if (icon.color)
+		attron(COLOR_PAIR(C_UND + 1 + icon.color));
 	else if (attrs)
 		attron(attrs);
-	addstr(picon->icon);
-	if (picon->color)
-		attroff(COLOR_PAIR(C_UND + 1 + picon->color));
+	addstr(icon.icon);
+	if (icon.color)
+		attroff(COLOR_PAIR(C_UND + 1 + icon.color));
 	else if (attrs)
 		attroff(attrs);
 	addstr(ICON_PADDING_RIGHT);
@@ -8525,7 +8521,7 @@ int main(int argc, char *argv[])
 			initpath = startpath ? xstrdup(startpath) : getcwd(NULL, 0);
 			if (!initpath)
 				initpath = "/";
-		} else {
+		} else { /* Open a file */
 			arg = argv[optind];
 			DPRINTF_S(arg);
 			if (xstrlen(arg) > 7 && is_prefix(arg, "file://", 7))
@@ -8536,6 +8532,10 @@ int main(int argc, char *argv[])
 				xerror();
 				return EXIT_FAILURE;
 			}
+
+			/* If the file is hidden, enable hidden option */
+			if (*xbasename(initpath) == '.')
+				cfg.showhidden = 1;
 
 			/*
 			 * If nnn is set as the file manager, applications may try to open
