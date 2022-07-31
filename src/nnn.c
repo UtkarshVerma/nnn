@@ -125,7 +125,7 @@
 
 #if defined(ICONS_IN_TERM) || defined(NERD) || defined(EMOJI)
 #define ICONS_ENABLED
-#include "icons-generated.h"
+#include ICONS_INCLUDE
 #include "icons-hash.c"
 #include "icons.h"
 #endif
@@ -135,7 +135,7 @@
 #endif
 
 /* Macro definitions */
-#define VERSION      "4.5"
+#define VERSION      "4.6"
 #define GENERAL_INFO "BSD 2-Clause\nhttps://github.com/jarun/nnn"
 
 #ifndef NOSSN
@@ -189,7 +189,7 @@
 #define DOT_FILTER_LEN  7
 #define ASCII_MAX       128
 #define EXEC_ARGS_MAX   10
-#define LIST_FILES_MAX  (1 << 16)
+#define LIST_FILES_MAX  (1 << 14) /* Support listing 16K files */
 #define SCROLLOFF       3
 #define COLOR_256       256
 
@@ -373,7 +373,8 @@ typedef struct {
 	uint_t stayonsel  : 1;  /* Disable auto-advance on selection */
 	uint_t trash      : 2;  /* Trash method 0: rm -rf, 1: trash-cli, 2: gio trash */
 	uint_t uidgid     : 1;  /* Show owner and group info */
-	uint_t reserved   : 6;  /* Adjust when adding/removing a field */
+	uint_t usebsdtar  : 1;  /* Use bsdtar as default archive utility */
+	uint_t reserved   : 5;  /* Adjust when adding/removing a field */
 } runstate;
 
 /* Contexts or workspaces */
@@ -584,7 +585,7 @@ static char * const utils[] = {
 #define MSG_CP_MV_AS     7
 #define MSG_CUR_SEL_OPTS 8
 #define MSG_FORCE_RM     9
-#define MSG_LIMIT        10
+#define MSG_SIZE_LIMIT   10
 #define MSG_NEW_OPTS     11
 #define MSG_CLI_MODE     12
 #define MSG_OVERWRITE    13
@@ -618,6 +619,7 @@ static char * const utils[] = {
 #define MSG_NOCHANGE     41
 #define MSG_DIR_CHANGED  42
 #define MSG_BM_NAME      43
+#define MSG_FILE_LIMIT   44
 
 static const char * const messages[] = {
 	"",
@@ -629,8 +631,8 @@ static const char * const messages[] = {
 	"session name: ",
 	"'c'p/'m'v as?",
 	"'c'urrent/'s'el?",
-	"%s %s? [Esc/n/N cancels]",
-	"limit exceeded",
+	"%s %s? [Esc cancels]",
+	"size limit exceeded",
 	"'f'ile/'d'ir/'s'ym/'h'ard?",
 	"'c'li/'g'ui?",
 	"overwrite?",
@@ -664,6 +666,7 @@ static const char * const messages[] = {
 	"unchanged",
 	"dir changed, range sel off",
 	"name: ",
+	"file limit exceeded",
 };
 
 /* Supported configuration environment variables */
@@ -728,7 +731,7 @@ static char mv[] = "mv -i";
 #endif
 
 /* Archive commands */
-static const char * const archive_cmd[] = {"bsdtar -acvf", "atool -a", "zip -r", "tar -acvf"};
+static const char * const archive_cmd[] = {"atool -a", "bsdtar -acvf", "zip -r", "tar -acvf"};
 
 /* Tokens used for path creation */
 #define TOK_BM  0
@@ -1430,7 +1433,7 @@ static char confirm_force(bool selection)
 
 	int r = get_input(str);
 
-	if (r == ESC || r == 'n' || r == 'N')
+	if (r == ESC)
 		return '\0'; /* cancel */
 	if (r == 'y' || r == 'Y')
 		return 'f'; /* forceful for rm */
@@ -2670,9 +2673,9 @@ static void get_archive_cmd(char *cmd, const char *archive)
 {
 	uchar_t i = 3;
 
-	if (getutil(utils[UTIL_BSDTAR]))
+	if (!g_state.usebsdtar && getutil(utils[UTIL_ATOOL]))
 		i = 0;
-	else if (getutil(utils[UTIL_ATOOL]))
+	else if (getutil(utils[UTIL_BSDTAR]))
 		i = 1;
 	else if (is_suffix(archive, ".zip"))
 		i = 2;
@@ -4573,8 +4576,7 @@ static bool handle_archive(char *fpath /* in-out param */, char op)
 	char arg[] = "-tvf"; /* options for tar/bsdtar to list files */
 	char *util, *outdir = NULL;
 	bool x_to = FALSE;
-	bool is_bsdtar = getutil(utils[UTIL_BSDTAR]);
-	bool is_atool = !is_bsdtar && getutil(utils[UTIL_ATOOL]);
+	bool is_atool = (!g_state.usebsdtar && getutil(utils[UTIL_ATOOL]));
 
 	if (op == 'x') {
 		outdir = xreadline(is_atool ? "." : xbasename(fpath), messages[MSG_NEW_PATH]);
@@ -4594,14 +4596,14 @@ static bool handle_archive(char *fpath /* in-out param */, char op)
 		}
 	}
 
-	if (is_bsdtar) {
-		util = utils[UTIL_BSDTAR];
-		if (op == 'x')
-			arg[1] = op;
-	} else if (is_atool) {
+	if (is_atool) {
 		util = utils[UTIL_ATOOL];
 		arg[1] = op;
 		arg[2] = '\0';
+	} else if (getutil(utils[UTIL_BSDTAR])) {
+		util = utils[UTIL_BSDTAR];
+		if (op == 'x')
+			arg[1] = op;
 	} else if (is_suffix(fpath, ".zip")) {
 		util = utils[UTIL_UNZIP];
 		arg[1] = (op == 'l') ? 'v' /* verbose listing */ : '\0';
@@ -5543,7 +5545,7 @@ static bool prep_threads(void)
 }
 
 /* Skip self and parent */
-static bool selforparent(const char *path)
+static inline bool selforparent(const char *path)
 {
 	return path[0] == '.' && (path[1] == '\0' || (path[1] == '.' && path[2] == '\0'));
 }
@@ -7900,7 +7902,8 @@ static char *make_tmp_tree(char **paths, ssize_t entries, const char *prefix)
 		if (slash)
 			*slash = '\0';
 
-		xmktree(tmpdir, TRUE);
+		if (access(tmpdir, F_OK)) /* Create directory if it doesn't exist */
+			xmktree(tmpdir, TRUE);
 
 		if (slash)
 			*slash = '/';
@@ -7939,7 +7942,7 @@ static char *load_input(int fd, const char *path)
 	} else
 		xstrsncpy(cwd, path, PATH_MAX);
 
-	while (chunk_count < 512) {
+	while ((chunk_count) < 512 && !msgnum) {
 		input_read = read(fd, input + total_read, chunk);
 		if (input_read < 0) {
 			DPRINTF_S(strerror(errno));
@@ -7963,8 +7966,8 @@ static char *load_input(int fd, const char *path)
 			}
 
 			if (entries == LIST_FILES_MAX) {
-				msgnum = MSG_LIMIT;
-				goto malloc_1;
+				msgnum = MSG_FILE_LIMIT;
+				break;
 			}
 
 			offsets[entries++] = off;
@@ -7972,8 +7975,8 @@ static char *load_input(int fd, const char *path)
 		}
 
 		if (chunk_count == 512) {
-			msgnum = MSG_LIMIT;
-			goto malloc_1;
+			msgnum = MSG_SIZE_LIMIT;
+			break;
 		}
 
 		/* We don't need to allocate another chunk */
@@ -7989,13 +7992,17 @@ static char *load_input(int fd, const char *path)
 			return NULL;
 	}
 
-	if (off != total_read) {
-		if (entries == LIST_FILES_MAX) {
-			msgnum = MSG_LIMIT;
-			goto malloc_1;
-		}
+	/* Read off the extra data if limits exceeded */
+	if (msgnum) {
+		char buf[512];
+		while (read(fd, buf, 512) > 0);
+	}
 
-		offsets[entries++] = off;
+	if (off != total_read) {
+		if (entries == LIST_FILES_MAX)
+			msgnum = MSG_FILE_LIMIT;
+		else
+			offsets[entries++] = off;
 	}
 
 	DPRINTF_D(entries);
@@ -8056,12 +8063,14 @@ malloc_2:
 	for (i = entries - 1; i >= 0; --i)
 		free(paths[i]);
 malloc_1:
-	if (msgnum) {
-		if (home) { /* We are past init stage */
+	if (msgnum) { /* Check if we are past init stage and show msg */
+		if (home) {
 			printmsg(messages[msgnum]);
-			xdelay(XDELAY_INTERVAL_MS);
-		} else
+			xdelay(XDELAY_INTERVAL_MS << 2);
+		} else {
 			msg(messages[msgnum]);
+			usleep(XDELAY_INTERVAL_MS << 2);
+		}
 	}
 	free(input);
 	free(paths);
@@ -8096,6 +8105,7 @@ static void usage(void)
 #endif
 		" -A      no dir auto-enter during filter\n"
 		" -b key  open bookmark key (trumps -s/S)\n"
+		" -B      use bsdtar for archives\n"
 		" -c      cli-only NNN_OPENER (trumps -e)\n"
 		" -C      8-color scheme\n"
 		" -d      detail mode\n"
@@ -8193,7 +8203,8 @@ static bool setup_config(void)
 	/* Create bookmarks, sessions, mounts and plugins directories */
 	for (r = 0; r < ELEMENTS(toks); ++r) {
 		mkpath(cfgpath, toks[r], plgpath);
-		if (!xmktree(plgpath, TRUE)) {
+		/* The dirs are created on first run, check if they already exist */
+		if (access(plgpath, F_OK) && !xmktree(plgpath, TRUE)) {
 			DPRINTF_S(toks[r]);
 			xerror();
 			return FALSE;
@@ -8291,7 +8302,7 @@ int main(int argc, char *argv[])
 
 	while ((opt = (env_opts_id > 0
 		       ? env_opts[--env_opts_id]
-		       : getopt(argc, argv, "aAb:cCdDeEfF:gHiJKl:nop:P:QrRs:St:T:uUVxh"))) != -1) {
+		       : getopt(argc, argv, "aAb:BcCdDeEfF:gHiJKl:nop:P:QrRs:St:T:uUVxh"))) != -1) {
 		switch (opt) {
 #ifndef NOFIFO
 		case 'a':
@@ -8304,6 +8315,9 @@ int main(int argc, char *argv[])
 		case 'b':
 			if (env_opts_id < 0)
 				arg = optarg;
+			break;
+		case 'B':
+			g_state.usebsdtar = 1;
 			break;
 		case 'c':
 			cfg.cliopener = 1;
