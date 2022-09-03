@@ -100,6 +100,8 @@
 #include <strings.h>
 #include <time.h>
 #include <unistd.h>
+#include <stddef.h>
+#include <stdalign.h>
 #ifndef __USE_XOPEN_EXTENDED
 #define __USE_XOPEN_EXTENDED 1
 #endif
@@ -190,6 +192,7 @@
 #define ASCII_MAX       128
 #define EXEC_ARGS_MAX   10
 #define LIST_FILES_MAX  (1 << 14) /* Support listing 16K files */
+#define LIST_INPUT_MAX  ((size_t)LIST_FILES_MAX * PATH_MAX)
 #define SCROLLOFF       3
 #define COLOR_256       256
 
@@ -407,7 +410,7 @@ static settings cfg = {
 	.rollover = 1,
 };
 
-static context g_ctx[CTX_MAX] __attribute__ ((aligned));
+alignas(max_align_t) static context g_ctx[CTX_MAX];
 
 static int ndents, cur, last, curscroll, last_curscroll, total_dents = ENTRY_INCR, scroll_lines = 1;
 static int nselected;
@@ -489,16 +492,16 @@ static struct sigaction oldsigtstp;
 static struct sigaction oldsigwinch;
 
 /* For use in functions which are isolated and don't return the buffer */
-static char g_buf[CMD_LEN_MAX] __attribute__ ((aligned));
+alignas(max_align_t) static char g_buf[CMD_LEN_MAX];
 
 /* For use as a scratch buffer in selection manipulation */
-static char g_sel[PATH_MAX] __attribute__ ((aligned));
+alignas(max_align_t) static char g_sel[PATH_MAX];
 
 /* Buffer to store tmp file path to show selection, file stats and help */
-static char g_tmpfpath[TMP_LEN_MAX] __attribute__ ((aligned));
+alignas(max_align_t) static char g_tmpfpath[TMP_LEN_MAX];
 
 /* Buffer to store plugins control pipe location */
-static char g_pipepath[TMP_LEN_MAX] __attribute__ ((aligned));
+alignas(max_align_t) static char g_pipepath[TMP_LEN_MAX];
 
 /* Non-persistent runtime states */
 static runstate g_state;
@@ -982,10 +985,7 @@ static char *xstrdup(const char *restrict s)
 {
 	size_t len = xstrlen(s) + 1;
 	char *ptr = malloc(len);
-
-	if (ptr)
-		xstrsncpy(ptr, s, len);
-	return ptr;
+	return ptr ? memcpy(ptr, s, len) : NULL;
 }
 
 static bool is_suffix(const char *restrict str, const char *restrict suffix)
@@ -2793,7 +2793,7 @@ static int xstrverscasecmp(const char * const s1, const char * const s2)
 		/* S_Z */  S_N, S_F, S_Z
 	};
 
-	static const int8_t result_type[] __attribute__ ((aligned)) = {
+	alignas(max_align_t) static const int8_t result_type[] = {
 		/* state   x/x  x/d  x/0  d/x  d/d  d/0  0/x  0/d  0/0  */
 
 		/* S_N */  VCMP, VCMP, VCMP, VCMP, VLEN, VCMP, VCMP, VCMP, VCMP,
@@ -2992,7 +2992,7 @@ static int nextsel(int presel)
 	return SEL_QUIT;
 #endif
 	wint_t c = presel;
-	int i = ERR;
+	int i = 0;
 	bool escaped = FALSE;
 
 	if (c == 0 || c == MSGWAIT) {
@@ -3226,7 +3226,7 @@ static int dentfind(const char *fname, int n)
 
 static int filterentries(char *path, char *lastname)
 {
-	wchar_t *wln = (wchar_t *)alloca(sizeof(wchar_t) * REGEX_MAX);
+	alignas(max_align_t) wchar_t wln[REGEX_MAX];
 	char *ln = g_ctx[cfg.curctx].c_fltr;
 	wint_t ch[1];
 	int r, total = ndents, len;
@@ -4972,7 +4972,7 @@ static void show_help(const char *path)
 	       "9Dn j  Down%-14cPgDn ^D  Page down\n"
 	       "9Lt h  Parent%-12c~ ` @ -  ~, /, start, prev\n"
 	   "5Ret Rt l  Open%-20c'  First file/match\n"
-	       "9g ^A  Top%-21c.  Toggle hidden\n"
+	       "9g ^A  Top%-21cJ  Jump to entry/offset\n"
 	       "9G ^E  End%-20c^J  Toggle auto-advance on open\n"
 	      "8B (,)  Book(mark)%-11cb ^/  Select bookmark\n"
 		"a1-4  Context%-11c(Sh)Tab  Cycle/new context\n"
@@ -4982,7 +4982,7 @@ static void show_help(const char *path)
 	"1FILTER & PROMPT\n"
 		  "c/  Filter%-17c^N  Toggle type-to-nav\n"
 		"aEsc  Exit prompt%-12c^L  Toggle last filter\n"
-			"d%-20cAlt+Esc  Unfilter, quit context\n"
+		  "c.  Toggle hidden%-5cAlt+Esc  Unfilter, quit context\n"
 	"0\n"
 	"1FILES\n"
 	       "9o ^O  Open with%-15cn  Create new/link\n"
@@ -5934,11 +5934,11 @@ static void handle_screen_move(enum action sel)
 
 	switch (sel) {
 	case SEL_NEXT:
-		if (ndents && (cfg.rollover || (cur != ndents - 1)))
+		if (cfg.rollover || (cur != ndents - 1))
 			move_cursor((cur + 1) % ndents, 0);
 		break;
 	case SEL_PREV:
-		if (ndents && (cfg.rollover || cur))
+		if (cfg.rollover || cur)
 			move_cursor((cur + ndents - 1) % ndents, 0);
 		break;
 	case SEL_PGDN:
@@ -5951,7 +5951,7 @@ static void handle_screen_move(enum action sel)
 		move_cursor(curscroll + (onscreen - 1), 1);
 		curscroll += onscreen >> 1;
 		break;
-	case SEL_PGUP: // fallthrough
+	case SEL_PGUP:
 		onscreen = xlines - 4;
 		move_cursor(curscroll, 1);
 		curscroll -= onscreen - 1;
@@ -5961,6 +5961,32 @@ static void handle_screen_move(enum action sel)
 		move_cursor(curscroll, 1);
 		curscroll -= onscreen >> 1;
 		break;
+	case SEL_JUMP:
+	{
+		char *input = xreadline(NULL, "jump (+n/-n/n): ");
+
+		if (!input || !*input)
+			break;
+		if (input[0] == '-') {
+			cur -= atoi(input + 1);
+			if (cur < 0)
+				cur = 0;
+		} else if (input[0] == '+') {
+			cur += atoi(input + 1);
+			if (cur >= ndents)
+				cur = ndents - 1;
+		} else {
+			int index = atoi(input);
+
+			if ((index < 1) || (index > ndents))
+				break;
+			cur = index - 1;
+		}
+		onscreen = xlines - 4;
+		move_cursor(cur, 1);
+		curscroll -= onscreen >> 1;
+		break;
+	}
 	case SEL_HOME:
 		move_cursor(0, 1);
 		break;
@@ -6535,8 +6561,8 @@ static bool cdprep(char *lastdir, char *lastname, char *path, char *newpath)
 
 static bool browse(char *ipath, const char *session, int pkey)
 {
-	char newpath[PATH_MAX] __attribute__ ((aligned)),
-	     runfile[NAME_MAX + 1] __attribute__ ((aligned));
+	alignas(max_align_t) char newpath[PATH_MAX];
+	alignas(max_align_t) char runfile[NAME_MAX + 1];
 	char *path, *lastdir, *lastname, *dir, *tmp;
 	pEntry pent;
 	enum action sel;
@@ -7031,7 +7057,8 @@ nochange:
 		case SEL_CTRL_U: // fallthrough
 		case SEL_HOME: // fallthrough
 		case SEL_END: // fallthrough
-		case SEL_FIRST:
+		case SEL_FIRST: // fallthrough
+		case SEL_JUMP:
 			if (ndents) {
 				g_state.move = 1;
 				handle_screen_move(sel);
@@ -7921,7 +7948,7 @@ static char *make_tmp_tree(char **paths, ssize_t entries, const char *prefix)
 
 static char *load_input(int fd, const char *path)
 {
-	ssize_t i, chunk_count = 1, chunk = (ssize_t)(512 * 1024) /* 512 KiB chunk size */, entries = 0;
+	size_t i, chunk_count = 1, chunk = 512UL * 1024 /* 512 KiB chunk size */, entries = 0;
 	char *input = malloc(sizeof(char) * chunk), *tmpdir = NULL;
 	char cwd[PATH_MAX], *next;
 	size_t offsets[LIST_FILES_MAX];
@@ -7942,9 +7969,12 @@ static char *load_input(int fd, const char *path)
 	} else
 		xstrsncpy(cwd, path, PATH_MAX);
 
-	while ((chunk_count) < 512 && !msgnum) {
+	while (chunk_count < LIST_INPUT_MAX / chunk && !msgnum) {
 		input_read = read(fd, input + total_read, chunk);
 		if (input_read < 0) {
+			if (errno == EINTR)
+				continue
+
 			DPRINTF_S(strerror(errno));
 			goto malloc_1;
 		}
@@ -7953,7 +7983,6 @@ static char *load_input(int fd, const char *path)
 			break;
 
 		total_read += input_read;
-		++chunk_count;
 
 		while (off < total_read) {
 			if ((next = memchr(input + off, '\0', total_read - off)) == NULL)
@@ -7974,29 +8003,23 @@ static char *load_input(int fd, const char *path)
 			off = next - input;
 		}
 
-		if (chunk_count == 512) {
+		/* We don't need to allocate another chunk */
+		if (chunk_count > (total_read + chunk - 1) / chunk)
+			continue;
+
+		/* We can never need more than one additional chunk */
+		++chunk_count;
+		if (chunk_count > LIST_INPUT_MAX / chunk) {
 			msgnum = MSG_SIZE_LIMIT;
 			break;
 		}
 
-		/* We don't need to allocate another chunk */
-		if (chunk_count == (total_read - input_read) / chunk)
-			continue;
-
-		chunk_count = total_read / chunk;
-		if (total_read % chunk)
-			++chunk_count;
-
-		input = xrealloc(input, (chunk_count + 1) * chunk);
+		input = xrealloc(input, chunk_count * chunk);
 		if (!input)
-			return NULL;
+			goto malloc_1;
 	}
 
-	/* Read off the extra data if limits exceeded */
-	if (msgnum) {
-		char buf[512];
-		while (read(fd, buf, 512) > 0);
-	}
+	/* We close fd outside this function. Any extra data is left to the kernel to handle */
 
 	if (off != total_read) {
 		if (entries == LIST_FILES_MAX)
@@ -8040,7 +8063,6 @@ static char *load_input(int fd, const char *path)
 		if (!paths[i]) {
 			entries = i; // free from the previous entry
 			goto malloc_2;
-
 		}
 
 		DPRINTF_S(paths[i]);
@@ -8060,7 +8082,7 @@ static char *load_input(int fd, const char *path)
 		tmpdir = make_tmp_tree(paths, entries, listroot);
 
 malloc_2:
-	for (i = entries - 1; i >= 0; --i)
+	for (i = 0; i < entries; ++i)
 		free(paths[i]);
 malloc_1:
 	if (msgnum) { /* Check if we are past init stage and show msg */
@@ -8072,6 +8094,7 @@ malloc_1:
 			usleep(XDELAY_INTERVAL_MS << 2);
 		}
 	}
+
 	free(input);
 	free(paths);
 	return tmpdir;
@@ -8079,7 +8102,7 @@ malloc_1:
 
 static void check_key_collision(void)
 {
-	int key;
+	wint_t key;
 	bool bitmap[KEY_MAX] = {FALSE};
 
 	for (ullong_t i = 0; i < ELEMENTS(bindings); ++i) {
