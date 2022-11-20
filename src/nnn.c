@@ -1429,7 +1429,7 @@ static char confirm_force(bool selection)
 
 	snprintf(str, 64, messages[MSG_FORCE_RM],
 		 g_state.trash ? utils[UTIL_GIO_TRASH] + 4 : utils[UTIL_RM_RF],
-		 (selection ? "selection" : "hovered"));
+		 (selection ? "selected" : "hovered"));
 
 	int r = get_input(str);
 
@@ -6674,7 +6674,7 @@ begin:
 			if (cfgsort[cfg.curctx] == 'z')
 				set_sort_flags('c');
 			if ((!cfgsort[cfg.curctx] || (cfgsort[cfg.curctx] == 'c'))
-			    && ((r = get_kv_key(order, path, maxorder, NNN_ORDER)) > 0)) {
+			    && ((r = get_kv_key(order, path, maxorder, NNN_ORDER)) > 0)) { // NOLINT
 				set_sort_flags(r);
 				cfgsort[cfg.curctx] = 'z';
 			}
@@ -7538,7 +7538,7 @@ nochange:
 				if (r == 'f' || r == 'd')
 					tmp = xreadline(NULL, messages[MSG_NEW_PATH]);
 				else if (r == 's' || r == 'h')
-					tmp = xreadline(NULL,
+					tmp = xreadline(nselected == 1 ? xbasename(pselbuf) : NULL,
 						messages[nselected <= 1?MSG_NEW_PATH:MSG_LINK_PREFIX]);
 				else
 					tmp = NULL;
@@ -7973,7 +7973,7 @@ static char *load_input(int fd, const char *path)
 		input_read = read(fd, input + total_read, chunk);
 		if (input_read < 0) {
 			if (errno == EINTR)
-				continue
+				continue;
 
 			DPRINTF_S(strerror(errno));
 			goto malloc_1;
@@ -7985,7 +7985,8 @@ static char *load_input(int fd, const char *path)
 		total_read += input_read;
 
 		while (off < total_read) {
-			if ((next = memchr(input + off, '\0', total_read - off)) == NULL)
+			next = memchr(input + off, '\0', total_read - off);
+			if (!next)
 				break;
 			++next;
 
@@ -8145,7 +8146,7 @@ static void usage(void)
 		" -H      show hidden files\n"
 		" -i      show current file info\n"
 		" -J      no auto-advance on selection\n"
-		" -K      detect key collision\n"
+		" -K      detect key collision and exit\n"
 		" -l val  set scroll lines\n"
 		" -n      type-to-nav mode\n"
 		" -o      open files only on Enter\n"
